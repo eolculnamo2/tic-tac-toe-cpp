@@ -20,6 +20,8 @@ class GameData {
     GameData();
     ~GameData();
     void round();
+    bool validateSpace(string space);
+    bool checkForWinner();
 };
 
 #endif /* GAMEDATA_H_ */
