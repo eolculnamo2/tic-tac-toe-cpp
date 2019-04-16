@@ -13,8 +13,9 @@ using namespace std;
 string validSpaces[] = { "A1", "B1", "C1", "A2", "B2", "C2", "A3", "B3", "C3" };
 int main() {
   GameData game;
-  game.round();
-  game.checkForWinner();
+  while(game.checkForWinner() == false) {
+    game.round();
+  };
   return 0;
 }
 
@@ -32,7 +33,7 @@ GameData::GameData() {
 
 
 GameData::~GameData() {
-  log("Game over!");
+  log("Game over! " + winner + " wins!!");
 };
 
 void GameData::round() {
@@ -47,7 +48,7 @@ void GameData::round() {
   while(validateSpace(selectedSpace) == false) {
     cin >> selectedSpace;
     if(validateSpace(selectedSpace) == false) {
-      log("Input is invalid. Please entre again.");
+      log("Input is invalid. Please enter again.");
     }
   }
 
@@ -61,6 +62,12 @@ void GameData::round() {
 bool GameData::validateSpace(string space) {
   for(int i = 0; i < sizeof(validSpaces)/sizeof(string); i++) {
     if(space == validSpaces[i]) {
+      for(int j = 0; j < board.size(); j++) {
+        log(board[j].space);
+        if(board[i].space == validSpaces[i]) {
+          return false;
+        }
+      }
       return true;
     }
   }
@@ -88,12 +95,39 @@ bool GameData::checkForWinner() {
 
 
   for(int i = 0; i < board.size(); i++) {
+    bool isP1 = board[i].player == player1;
+
     switch(board[i].space.at(0)) {
       case 'A':
-        p1.a++;
+        isP1 ? p1.a++ : p2.a++;
         break;
+      case 'B':
+        isP1 ? p1.b++ : p2.b++;
+        break;
+      case 'C':
+        isP1 ? p1.c++ : p2.c++;
+        break;
+    }
 
+    switch(board[i].space.at(1)) {
+      case '1':
+        isP1 ? p1.one++ : p2.one++;
+        break;
+      case '2':
+        isP1 ? p1.two++ : p2.two++;
+        break;
+      case '3':
+        isP1 ? p1.three++ : p2.three++;
+        break;
+    }
+
+    if(p1.a == 3 || p1.b == 3 || p1.c == 3 || p1.one == 3 || p1.two == 3 || p1.three == 3) {
+      winner = player1;
+      return true;
+    } else if(p2.a == 3 || p2.b == 3 || p2.c == 3 || p2.one == 3 || p2.two == 3 || p2.three == 3) {
+      winner = player2;
+      return true;
     }
   }
-  return true;
+  return false;
 }
