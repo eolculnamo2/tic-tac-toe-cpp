@@ -56,15 +56,28 @@ void GameData::round() {
   selection.player = player1sTurn ? player1 : player2;
   selection.space = selectedSpace;
 
+  if(player1sTurn) {
+    player1sTurn = false;
+  } else {
+    player1sTurn = true;
+  }
+
   board.push_back(selection);
+  showBoard();
+}
+
+void GameData::showBoard() {
+
+  for(int i = 0; i < board.size(); i++) {
+    cout << board[0].player << endl;
+  }
 }
 
 bool GameData::validateSpace(string space) {
   for(int i = 0; i < sizeof(validSpaces)/sizeof(string); i++) {
     if(space == validSpaces[i]) {
       for(int j = 0; j < board.size(); j++) {
-        log(board[j].space);
-        if(board[i].space == validSpaces[i]) {
+        if(board[j].space == validSpaces[i]) {
           return false;
         }
       }
