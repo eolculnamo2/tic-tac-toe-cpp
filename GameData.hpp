@@ -21,6 +21,7 @@ class GameData {
     ~GameData();
     void round();
     void showBoard();
+    bool checkDiagnols(string);
     bool validateSpace(string space);
     bool checkForWinner();
 };

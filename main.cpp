@@ -13,7 +13,7 @@ using namespace std;
 string validSpaces[] = { "A1", "B1", "C1", "A2", "B2", "C2", "A3", "B3", "C3" };
 int main() {
   GameData game;
-  while(game.checkForWinner() == false) {
+  while(game.checkForWinner() == false && game.board.size() != sizeof(validSpaces)/sizeof(string)) {
     game.round();
   };
   return 0;
@@ -23,6 +23,32 @@ void log(string message) {
   cout << message << endl;
 }
 
+void GameData::showBoard() {
+  string row1;
+  string row2;
+  string row3;
+  for(int i=0; i < board.size(); i++) {
+    string val;
+    if(board[i].player == player1) {
+      val = "x";
+    } else if (board[i].player == player2) {
+      val = "o";
+    } else {
+      val = "_";
+    }
+    char s = board[i].space.at(0);
+    if(s== 'A') {
+      row1.append(val);
+    } else if(s == 'B') {
+      row2.append(val);
+    } else {
+      row3.append(val);
+    }
+  }
+  log(row1);
+  log(row2);
+  log(row3);
+}
 GameData::GameData() {
   player1sTurn = true;
   log("Enter player 1's name");
@@ -66,13 +92,6 @@ void GameData::round() {
   showBoard();
 }
 
-void GameData::showBoard() {
-
-  for(int i = 0; i < board.size(); i++) {
-    cout << board[0].player << endl;
-  }
-}
-
 bool GameData::validateSpace(string space) {
   for(int i = 0; i < sizeof(validSpaces)/sizeof(string); i++) {
     if(space == validSpaces[i]) {
@@ -87,11 +106,34 @@ bool GameData::validateSpace(string space) {
   return false;
 }
 
+bool GameData::checkDiagnols(string player) {
+  string diagonalWin1[] = {"A1, B2", "C3"};
+  string diagonalWin2[] = {"A3", "B2", "C1"};
+  int win1Count = 0;
+  int win2Count = 0;
+  for(int i=0; i<board.size(); i++) {
+    if(board[i].player == player) {
+      // checks if value exists in one of two diagnol win arrays;
+      if(std::find(std::begin(diagonalWin1), std::end(diagonalWin1), board[i].space) != std::end(diagonalWin1) == true) {
+        log("In here");
+        win1Count++;
+      }
+      if(std::find(std::begin(diagonalWin2), std::end(diagonalWin2), board[i].space) != std::end(diagonalWin2) == true) {
+        win2Count++;
+      }
+    }
+    if(win1Count > 2 || win2Count > 2) {
+      return true;
+    }
+  }
+
+  return false;
+
+}
+
 bool GameData::checkForWinner() {
   // winning conditions.. 3 of any letter or number for rows and columns
   // Diagonals hard coded;
-  string diagonalWin1[] = {"A1, B2", "C3"};
-  string diagonalWin2[] = {"A3", "B2", "C1"};
 
   // counts to check above conditions of three of any;
   struct playerCount {
@@ -134,10 +176,11 @@ bool GameData::checkForWinner() {
         break;
     }
 
-    if(p1.a == 3 || p1.b == 3 || p1.c == 3 || p1.one == 3 || p1.two == 3 || p1.three == 3) {
+    if(p1.a == 3 || p1.b == 3 || p1.c == 3 || p1.one == 3 || p1.two == 3 || p1.three == 3 || checkDiagnols(player1)) {
+
       winner = player1;
       return true;
-    } else if(p2.a == 3 || p2.b == 3 || p2.c == 3 || p2.one == 3 || p2.two == 3 || p2.three == 3) {
+    } else if(p2.a == 3 || p2.b == 3 || p2.c == 3 || p2.one == 3 || p2.two == 3 || p2.three == 3 || checkDiagnols(player2)) {
       winner = player2;
       return true;
     }
